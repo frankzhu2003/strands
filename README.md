@@ -16,14 +16,13 @@ This project provides two main components for interacting with the Develocity AP
 - Retrieve build details by build ID
 
 ### Setup
-1. https://medium.com/techbull/using-aws-strands-with-ollama-0cba83009a2b
+1. [A quick set up from Medium](https://medium.com/techbull/using-aws-strands-with-ollama-0cba83009a2b)
 2. **Configure environment variables:**
-   Create a `.env` file in the project root with:
    ```ini
-   DEVELOCITY_URL=https://your_develocity.com
-   DEVELOCITY_API_KEY=your_develocity_api_key
+   export DEVELOCITY_URL=https://your_develocity.com
+   export DEVELOCITY_API_KEY=your_develocity_api_key
    ```
-   Replace `your_develocity_api_key` with your actual API key.
+   Replace `your_develocity, your_develocity_api_key`.
 
 
 ## 2. develocitySA
