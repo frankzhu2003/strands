@@ -1,0 +1,6 @@
+httpx
+requests
+python-dotenv
+strands
+strands-tools
+mcp 
