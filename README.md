@@ -4,7 +4,7 @@
 This project provides two main components for interacting with the Develocity API:
 
 - **develocitymcp**: An MCP server that exposes Develocity build information as tools, suitable for use by Strands Agents or other MCP clients.
-- **develocitySA**: (Assumed to be a Strands Agent or client) that interacts with the MCP server to retrieve build information from Develocity.
+- **develocitySA**: (A Strands Agent and MCP clients) that interacts with the MCP server to retrieve build information from Develocity and create issue in Github.
 
 ---
 
@@ -14,12 +14,13 @@ This project provides two main components for interacting with the Develocity AP
 `develocitymcp.py` is a Python MCP server that exposes tools to:
 - Retrieve the latest N build IDs from Develocity
 - Retrieve build details by build ID
+- Create a Github issue using the Build ID and Build Details
 
 ### Setup
 1. [A quick set up from Medium](https://medium.com/techbull/using-aws-strands-with-ollama-0cba83009a2b)
 2. **Configure environment variables:**
    ```ini
-   export DEVELOCITY_URL=https://your_develocity.com
+   export DEVELOCITY_URL=https://your_develocity
    export DEVELOCITY_API_KEY=your_develocity_api_key
    ```
    Replace `your_develocity, your_develocity_api_key`.
@@ -28,10 +29,12 @@ This project provides two main components for interacting with the Develocity AP
 ## 2. develocitySA
 
 ### Purpose
-`develocitySA` is a Strands Agent, using the local LLM, and compatible client that connects to the `develocitymcp` server to:
+`develocitySA` is a Strands Agent, using the local LLM, which uses compatible client that connects to the `develocitymcp` server to:
 - Query for the latest build IDs
 - Fetch build details by ID
 
+and compatible client that connects to the official `github-mcp-server` server to:
+- Create an issue using Build Id and Build Details
 ---
 
 ## 3. Run
