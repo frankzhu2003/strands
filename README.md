@@ -14,7 +14,6 @@ This project provides two main components for interacting with the Develocity AP
 `develocitymcp.py` is a Python MCP server that exposes tools to:
 - Retrieve the latest N build IDs from Develocity
 - Retrieve build details by build ID
-- Create a Github issue using the Build ID and Build Details
 
 ### Setup
 1. [A quick set up from Medium](https://medium.com/techbull/using-aws-strands-with-ollama-0cba83009a2b)
@@ -37,7 +36,16 @@ and compatible client that connects to the official `github-mcp-server` server t
 - Create an issue using Build Id and Build Details
 ---
 
-## 3. Run
+### Setup
+**Configure environment variables:**
+   ```ini
+   export GITHUB_REPO_NAME==https://your_github_repo
+   export GITHUB_PERSONAL_ACCESS_TOKEN=your_github_token
+   ```
+   Replace `your_github_repo, your_github_token`.
+
+
+### Run
 ```python
 
 python -u develocitySA.py
@@ -338,7 +346,3 @@ DEBUG | strands.agent.agent | thread pool executor shutdown complete
 DEBUG | strands.agent.agent | thread pool executor shutdown complete
 ```
 
----
-
-## License
-See [Develocity API Terms of Service](https://docs.gradle.com/develocity/api-manual/ref/2025.1.html) for usage restrictions. 
