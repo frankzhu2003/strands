@@ -62,5 +62,33 @@ def get_build_detail_by_id(build_id: str) -> str:
     except Exception as e:
         return f"Error fetching build details: {e}"
 
+@mcp.tool()
+def get_build_dependencies_by_id(build_id: str) -> str:
+    """
+    Get build dependencies by build ID from the Develocity API.
+    """
+    try:
+        url = f"{DEVELOCITY_URL}/api/builds/{build_id}/gradle-dependencies"
+        resp = httpx.get(url, headers=get_headers(), timeout=10)
+        resp.raise_for_status()
+        dependencies = resp.json()
+        return f"Build dependencies for {build_id}: {dependencies}"
+    except Exception as e:
+        return f"Error fetching build dependencies: {e}"
+
+@mcp.tool()
+def get_build_attributes_by_id(build_id: str) -> str:
+    """
+    Get build attributes by build ID from the Develocity API.
+    """
+    try:
+        url = f"{DEVELOCITY_URL}/api/builds/{build_id}/gradle-attributes"
+        resp = httpx.get(url, headers=get_headers(), timeout=10)
+        resp.raise_for_status()
+        attributes = resp.json()
+        return f"Build attributes for {build_id}: {attributes}"
+    except Exception as e:
+        return f"Error fetching build attributes: {e}"
+
 if __name__ == "__main__":
     mcp.run()
