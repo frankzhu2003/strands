@@ -1,5 +1,6 @@
 import os
 import httpx
+import json
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 
@@ -89,6 +90,44 @@ def get_build_attributes_by_id(build_id: str) -> str:
         return f"Build attributes for {build_id}: {attributes}"
     except Exception as e:
         return f"Error fetching build attributes: {e}"
+
+@mcp.tool()
+def get_build_repository_by_id(build_id: str) -> list:
+    """
+    Get build repository by build ID from the Develocity API.
+    The response contains text file.
+    """
+    try:
+        url = f"{DEVELOCITY_URL}/build-export/v2/build/{build_id}/events?eventTypes=Repository"
+        
+        resp = httpx.get(url, headers=get_headers(), timeout=30)
+        resp.raise_for_status()
+        
+        response_text = resp.text
+        # repositories = []
+        # decoder = json.JSONDecoder()
+        # pos = 0
+        # while pos < len(response_text):
+        #     # Skip any whitespace to find the start of the next JSON object
+        #     stripped_text = response_text[pos:].lstrip()
+        #     if not stripped_text:
+        #         break
+        #     pos = len(response_text) - len(stripped_text)
+
+        #     try:
+        #         # Decode one JSON object from the current position
+        #         obj, pos_after = decoder.raw_decode(response_text, pos)
+        #         pos = pos_after
+        #         if isinstance(obj, dict) and 'data' in obj:
+        #             repositories.append(obj['data'])
+        #     except json.JSONDecodeError:
+        #         # Stop parsing if we encounter invalid JSON
+        #         break
+                
+        return resp.text
+        
+    except Exception as e:
+        return [f"Error fetching build repository: {e}"]
 
 if __name__ == "__main__":
     mcp.run()
