@@ -45,8 +45,22 @@ For Claude Desktop, update the Claude's `claude_desktop_config.json` file, e.g. 
         "frankzhu2003/develocitymcp:v1.0"
       ],
       "env": {
-        "DEVELOCITY_URL": "https://your-develocity-url",
-        "DEVELOCITY_API_KEY": "your-develocity-api-key"
+        "DEVELOCITY_URL": "https://YOUR-develocity-url",
+        "DEVELOCITY_API_KEY": "YOUR-develocity-api-key"
+      }
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR-github-token"
       }
     }
   }
