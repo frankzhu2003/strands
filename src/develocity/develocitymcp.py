@@ -102,27 +102,6 @@ def get_build_repository_by_id(build_id: str) -> list:
         
         resp = httpx.get(url, headers=get_headers(), timeout=30)
         resp.raise_for_status()
-        
-        response_text = resp.text
-        # repositories = []
-        # decoder = json.JSONDecoder()
-        # pos = 0
-        # while pos < len(response_text):
-        #     # Skip any whitespace to find the start of the next JSON object
-        #     stripped_text = response_text[pos:].lstrip()
-        #     if not stripped_text:
-        #         break
-        #     pos = len(response_text) - len(stripped_text)
-
-        #     try:
-        #         # Decode one JSON object from the current position
-        #         obj, pos_after = decoder.raw_decode(response_text, pos)
-        #         pos = pos_after
-        #         if isinstance(obj, dict) and 'data' in obj:
-        #             repositories.append(obj['data'])
-        #     except json.JSONDecodeError:
-        #         # Stop parsing if we encounter invalid JSON
-        #         break
                 
         return resp.text
         
