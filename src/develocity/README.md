@@ -12,16 +12,43 @@ A `Dockerfile` is provided to run the server in a containerized environment.
 
 ### Building the Image
 
-To build the Docker image, run the following command from the root of the `strands` project:
+To build the Docker image, run the following command from this directory:
 
 ```sh
-docker build --build-arg DEVELOCITY_API_KEY=<your_api_key> --build-arg DEVELOCITY_URL=<your_develocity_url> -t develocity-mcp-server -f src/develocity/Dockerfile src/develocity
+docker build -t frankzhu2003/develocitymcp:v1.0 .
+```
+### Pushing the Image
+
+```sh
+docker push frankzhu2003/develocitymcp:v1.
 ```
 
-### Running the Container
+### Running the Develocity MCP Server in Agentic AI 
 
-The server requires the `DEVELOCITY_URL` and `DEVELOCITY_API_KEY` environment variables to be set. You can pass them to the `docker run` command:
+The server requires the `DEVELOCITY_URL` and `DEVELOCITY_API_KEY` environment variables to be set. 
 
-```sh
-docker run -p 8000:8000 develocity-mcp-server
+For Claude Desktop, update the Claude's `claude_desktop_config.json` file, e.g. /Users/fzhu/Library/Application Support/Claude/claude_desktop_config.json
+
+```
+{
+  "mcpServers": {
+    "develocitymcp": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "DEVELOCITY_API_KEY",
+        "-e",
+        "DEVELOCITY_URL",
+        "frankzhu2003/develocitymcp:v1.0"
+      ],
+      "env": {
+        "DEVELOCITY_URL": "https://your-develocity-url",
+        "DEVELOCITY_API_KEY": "your-develocity-api-key"
+      }
+    }
+  }
+}
 ``` 
