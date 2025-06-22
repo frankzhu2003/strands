@@ -1,6 +1,5 @@
 import os
 import httpx
-import json
 from mcp.server.fastmcp import FastMCP
 from dotenv import load_dotenv
 

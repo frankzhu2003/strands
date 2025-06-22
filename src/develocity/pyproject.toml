@@ -1,0 +1,13 @@
+[project]
+name = "develocity-mcp-server"
+version = "0.1.0"
+description = "A Develocity MCP server."
+dependencies = [
+    "httpx",
+    "python-dotenv",
+    "mcp-server"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta" 
