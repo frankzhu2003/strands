@@ -49,6 +49,26 @@ def get_latest_builds(count: int ) -> str:
         return f"Error fetching build IDs: {e}"
 
 @mcp.tool()
+def get_latest_build_by_project(project_id: str) -> str:
+    """
+    Get the latest build IDs from the Develocity API by project ID.
+    """
+    try:
+        url = f"{DEVELOCITY_URL}/api/builds?reverse=true&query=project:{project_id}"
+        logging.info(f"Fetching builds from {url}")
+        resp = httpx.get(url, headers=get_headers(), timeout=10)
+        resp.raise_for_status()
+        builds = resp.json()
+        if not builds:
+            return "No builds found."
+        build_ids = [build.get("id") for build in builds if build.get("id")]
+        return f"Latest {project_id} build IDs: {build_ids}"
+
+
+    except Exception as e:
+        return f"Error fetching build IDs: {e}"
+
+@mcp.tool()
 def get_build_detail_by_id(build_id: str) -> str:
     """
     Get build details by build ID from the Develocity API.
