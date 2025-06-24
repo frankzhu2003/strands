@@ -15,12 +15,12 @@ A `Dockerfile` is provided to run the server in a containerized environment.
 To build the Docker image, run the following command from this directory:
 
 ```sh
-docker build -t frankzhu2003/develocitymcp:v1.0 .
+docker build -t frankzhu2003/develocitymcp .
 ```
 ### Pushing the Image
 
 ```sh
-docker push frankzhu2003/develocitymcp:v1.
+docker push frankzhu2003/develocitymcp
 ```
 
 ### Running the Develocity MCP Server in Agentic AI 
@@ -42,7 +42,7 @@ For Claude Desktop, update the Claude's `claude_desktop_config.json` file, e.g. 
         "DEVELOCITY_API_KEY",
         "-e",
         "DEVELOCITY_URL",
-        "frankzhu2003/develocitymcp:v1.0"
+        "frankzhu2003/develocitymcp"
       ],
       "env": {
         "DEVELOCITY_URL": "https://YOUR-develocity-url",
