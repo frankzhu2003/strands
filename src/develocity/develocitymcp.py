@@ -29,101 +29,64 @@ def get_headers():
     }
 
 @mcp.tool()
-def get_latest_builds(count: int ) -> str:
+def get_builds(max_builds: int, include_attributes: bool, include_dependencies: bool, from_build_id: str, advanced_query: str) -> str:
     """
-    Get the latest N build IDs from the Develocity API.
+    Get the latest N builds from the Develocity API.
+    N has a limit of 10.
+    When N is greater than 10, another call to this function should be made where 'from_build_id' is the build ID of the oldest build in the current set.
+    This can be repeated until the desired number of builds is fetched.
+
+    Included in the response is a list of builds.
+    At the top level of each build is: id, available at, build tool type, build tool version, build agent version, and models.
+
+    Additional build attributes can be included in the response by calling this function with "include_attributes" equal to "true".
+    These attributes may vary between build tools, but will generally include information like: build start time, build duration, project name, requested tasks/goals/targets, build outcome (e.g., passed or failed), whether the failure was due to tests/compile/lint (verification), whether the failure was due to toolchain issues (non-verification), tags, custom values, Develocity settings, build tool-specific options, and details about the environment.
+    If these additional build attributes aren't required, it's better to call with "include_attributes" equal to "false" for faster and smaller responses.
+    Custom values and tags are user-defined data.
+    Custom values are key-value pairs where tags are a simple value.
+    Common custom values are (exactly as written in quotes): "Git branch", "Git commit id", "Git repository", "CI provider"
+    Common tags are: either "CI" or "LOCAL", the Git branch, the OS (exactly "Linux", "Mac OS X", or "Windows*"), and whether the working directory had modifications (exactly "Dirty")
+
+    The dependencies of a build can be included in the response by calling this function with "include_dependencies" equal to "true".
+    A build dependency includes: namespace (i.e., "group"), name (i.e., "artifact"), version, and purl or "package URL" (e.g., "pkg:maven/{namespace}/{name}@{version}")
+    If build dependencies aren't required, it's better to call with "include_dependencies" equal to "false" for faster and smaller responses.
+
+    The API also supports an optional advanced query parameter.
+    Each query can be made from one or more terms separated by spaces.
+    Each term is a field name and search pattern: fieldName:pattern.
+    For example, project:my-project, will include only build scans for my-project in the response.
+    Terms can be combined using boolean "and" and "or" operators, and grouped using parentheses: user:dylan or (tag:CI and value:"Git branch=master")
+    Terms can also be negated using "-": project:my-project -tag:local
+    Another example: user:dylan or not (tag:CI and value:"Git branch=master")
+    Supported fields are (exactly as written in quotes): "user", "project", "requested" (e.g., tasks/goals/targets), "buildTool", "value" (i.e., custom value), "tag"
     """
     try:
-        url = f"{DEVELOCITY_URL}/api/builds?reverse=true&maxBuilds={count}"
+        url=f"{DEVELOCITY_URL}/api/builds?reverse=true&maxBuilds={max_builds}&models=gradle-attributes&models=maven-attributes&models=bazel-attributes&models=npm-attributes&models=python-attributes&models=sbt-attributes"
+        if include_attributes:
+            url=url + "&models=gradle-attributes&models=maven-attributes&models=bazel-attributes&models=npm-attributes&models=python-attributes&models=sbt-attributes"
+        if include_dependencies:
+            url=url + "&models=gradle-dependencies&models=maven-dependencies"
+        if from_build_id:
+            url=url + f"&fromBuild={from_build_id}"
+        if advanced_query:
+            url=url + f"&query={advanced_query}"
         logging.info(f"Fetching builds from {url}")
         resp = httpx.get(url, headers=get_headers(), timeout=10)
         resp.raise_for_status()
-        builds = resp.json()
-        if not builds:
-            return "No builds found."
-        build_ids = [build.get("id") for build in builds if build.get("id")]
-        return f"Latest {count} build IDs: {build_ids}"
-
-
+        return resp.json()
     except Exception as e:
         return f"Error fetching build IDs: {e}"
 
 @mcp.tool()
-def get_latest_build_by_project(project_id: str) -> str:
+def get_configured_repositories_for_build(build_id: str) -> list:
     """
-    Get the latest build IDs from the Develocity API by project ID.
-    """
-    try:
-        url = f"{DEVELOCITY_URL}/api/builds?reverse=true&query=project:{project_id}"
-        logging.info(f"Fetching builds from {url}")
-        resp = httpx.get(url, headers=get_headers(), timeout=10)
-        resp.raise_for_status()
-        builds = resp.json()
-        if not builds:
-            return "No builds found."
-        build_ids = [build.get("id") for build in builds if build.get("id")]
-        return f"Latest {project_id} build IDs: {build_ids}"
-
-
-    except Exception as e:
-        return f"Error fetching build IDs: {e}"
-
-@mcp.tool()
-def get_build_detail_by_id(build_id: str) -> str:
-    """
-    Get build details by build ID from the Develocity API.
-    """
-    try:
-        url = f"{DEVELOCITY_URL}/api/builds/{build_id}"
-        resp = httpx.get(url, headers=get_headers(), timeout=10)
-        resp.raise_for_status()
-        build = resp.json()
-        return f"Build details for {build_id}: {build}"
-    except Exception as e:
-        return f"Error fetching build details: {e}"
-
-@mcp.tool()
-def get_build_dependencies_by_id(build_id: str) -> str:
-    """
-    Get build dependencies by build ID from the Develocity API.
-    """
-    try:
-        url = f"{DEVELOCITY_URL}/api/builds/{build_id}/gradle-dependencies"
-        resp = httpx.get(url, headers=get_headers(), timeout=10)
-        resp.raise_for_status()
-        dependencies = resp.json()
-        return f"Build dependencies for {build_id}: {dependencies}"
-    except Exception as e:
-        return f"Error fetching build dependencies: {e}"
-
-@mcp.tool()
-def get_build_attributes_by_id(build_id: str) -> str:
-    """
-    Get build attributes by build ID from the Develocity API.
-    """
-    try:
-        url = f"{DEVELOCITY_URL}/api/builds/{build_id}/gradle-attributes"
-        resp = httpx.get(url, headers=get_headers(), timeout=10)
-        resp.raise_for_status()
-        attributes = resp.json()
-        return f"Build attributes for {build_id}: {attributes}"
-    except Exception as e:
-        return f"Error fetching build attributes: {e}"
-
-@mcp.tool()
-def get_build_repository_by_id(build_id: str) -> list:
-    """
-    Get build repository by build ID from the Develocity API.
-    The response contains text file.
+    Get the configured repositories (e.g., Maven repositories) by build ID from the Develocity API.
     """
     try:
         url = f"{DEVELOCITY_URL}/build-export/v2/build/{build_id}/events?eventTypes=Repository"
-        
         resp = httpx.get(url, headers=get_headers(), timeout=30)
         resp.raise_for_status()
-                
         return resp.text
-        
     except Exception as e:
         return [f"Error fetching build repository: {e}"]
 
