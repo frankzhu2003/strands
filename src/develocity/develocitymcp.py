@@ -80,10 +80,23 @@ def get_builds(max_builds: int, include_attributes: bool, include_dependencies: 
 @mcp.tool()
 def get_configured_repositories_for_build(build_id: str) -> list:
     """
-    Get the configured repositories (e.g., Maven repositories) by build ID from the Develocity API.
+    Get the configured repositories (e.g., Maven repositories) by build ID from the Develocity Export API.
     """
     try:
         url = f"{DEVELOCITY_URL}/build-export/v2/build/{build_id}/events?eventTypes=Repository"
+        resp = httpx.get(url, headers=get_headers(), timeout=30)
+        resp.raise_for_status()
+        return resp.text
+    except Exception as e:
+        return [f"Error fetching build repository: {e}"]
+
+@mcp.tool()
+def get_failure_details_for_build(build_id: str) -> list:
+    """
+    Get the failure details by build ID from the Develocity Export API.
+    """
+    try:
+        url = f"{DEVELOCITY_URL}/build-export/v2/build/{build_id}/events?eventTypes=ExceptionData"
         resp = httpx.get(url, headers=get_headers(), timeout=30)
         resp.raise_for_status()
         return resp.text
