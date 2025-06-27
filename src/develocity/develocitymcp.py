@@ -61,7 +61,7 @@ def get_builds(max_builds: int, include_attributes: bool, include_dependencies: 
     Supported fields are (exactly as written in quotes): "user", "project", "requested" (e.g., tasks/goals/targets), "buildTool", "value" (i.e., custom value), "tag"
     """
     try:
-        url=f"{DEVELOCITY_URL}/api/builds?reverse=true&maxBuilds={max_builds}&models=gradle-attributes&models=maven-attributes&models=bazel-attributes&models=npm-attributes&models=python-attributes&models=sbt-attributes"
+        url=f"{DEVELOCITY_URL}/api/builds?reverse=true&maxBuilds={max_builds}"
         if include_attributes:
             url=url + "&models=gradle-attributes&models=maven-attributes&models=bazel-attributes&models=npm-attributes&models=python-attributes&models=sbt-attributes"
         if include_dependencies:
