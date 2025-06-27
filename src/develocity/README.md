@@ -66,3 +66,16 @@ For Claude Desktop, update the Claude's `claude_desktop_config.json` file, e.g. 
   }
 }
 ``` 
+
+### To run the MCP Server locally
+```
+"develocitymcp": {
+  "command": "uv",
+  "args": [
+    "--directory",
+    "/Users/fzhu/gradle/ai/strands",
+    "run",
+    "src/develocity/develocitymcp.py"
+  ]
+},
+```
