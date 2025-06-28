@@ -104,4 +104,5 @@ def get_failure_details_for_build(build_id: str) -> list:
         return [f"Error fetching build repository: {e}"]
 
 if __name__ == "__main__":
+    print("Starting Develocity MCP server")
     mcp.run()
