@@ -79,3 +79,8 @@ For Claude Desktop, update the Claude's `claude_desktop_config.json` file, e.g. 
   ]
 },
 ```
+
+### To run the MCP Inspector locally
+```
+npx @modelcontextprotocol/inspector uv run /Users/fzhu/gradle/ai/strands/src/develocity/develocitymcp.py
+```
