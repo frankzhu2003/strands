@@ -28,42 +28,71 @@ def get_headers():
         "Accept": "application/json"
     }
 
-@mcp.prompt(name="get_builds", description="Prompt for get_builds tool usage.")
-def get_builds_prompt() -> str:
-    return '''Get the latest N builds from the Develocity API.
-            N has a limit of 10.
-            When N is greater than 10, another call to this function should be made where 'from_build_id' is the build ID of the oldest build in the current set.
-            This can be repeated until the desired number of builds is fetched.
+# @mcp.prompt(name="get_builds", description="Prompt for get_builds tool usage.")
+# def get_builds_prompt() -> str:
+#     return '''Get the latest N builds from the Develocity API.
+#             N has a limit of 10.
+#             When N is greater than 10, another call to this function should be made where 'from_build_id' is the build ID of the oldest build in the current set.
+#             This can be repeated until the desired number of builds is fetched.
 
-            Included in the response is a list of builds.
-            At the top level of each build is: id, available at, build tool type, build tool version, build agent version, and models.
+#             Included in the response is a list of builds.
+#             At the top level of each build is: id, available at, build tool type, build tool version, build agent version, and models.
 
-            Additional build attributes can be included in the response by calling this function with "include_attributes" equal to "true".
-            These attributes may vary between build tools, but will generally include information like: build start time, build duration, project name, requested tasks/goals/targets, build outcome (e.g., passed or failed), whether the failure was due to tests/compile/lint (verification), whether the failure was due to toolchain issues (non-verification), tags, custom values, Develocity settings, build tool-specific options, and details about the environment.
-            If these additional build attributes aren't required, it's better to call with "include_attributes" equal to "false" for faster and smaller responses.
-            Custom values and tags are user-defined data.
-            Custom values are key-value pairs where tags are a simple value.
-            Common custom values are (exactly as written in quotes): "Git branch", "Git commit id", "Git repository", "CI provider"
-            Common tags are: either "CI" or "LOCAL", the Git branch, the OS (exactly "Linux", "Mac OS X", or "Windows*"), and whether the working directory had modifications (exactly "Dirty")
+#             Additional build attributes can be included in the response by calling this function with "include_attributes" equal to "true".
+#             These attributes may vary between build tools, but will generally include information like: build start time, build duration, project name, requested tasks/goals/targets, build outcome (e.g., passed or failed), whether the failure was due to tests/compile/lint (verification), whether the failure was due to toolchain issues (non-verification), tags, custom values, Develocity settings, build tool-specific options, and details about the environment.
+#             If these additional build attributes aren't required, it's better to call with "include_attributes" equal to "false" for faster and smaller responses.
+#             Custom values and tags are user-defined data.
+#             Custom values are key-value pairs where tags are a simple value.
+#             Common custom values are (exactly as written in quotes): "Git branch", "Git commit id", "Git repository", "CI provider"
+#             Common tags are: either "CI" or "LOCAL", the Git branch, the OS (exactly "Linux", "Mac OS X", or "Windows*"), and whether the working directory had modifications (exactly "Dirty")
 
-            The dependencies of a build can be included in the response by calling this function with "include_dependencies" equal to "true".
-            A build dependency includes: namespace (i.e., "group"), name (i.e., "artifact"), version, and purl or "package URL" (e.g., "pkg:maven/{namespace}/{name}@{version}")
-            If build dependencies aren't required, it's better to call with "include_dependencies" equal to "false" for faster and smaller responses.
+#             The dependencies of a build can be included in the response by calling this function with "include_dependencies" equal to "true".
+#             A build dependency includes: namespace (i.e., "group"), name (i.e., "artifact"), version, and purl or "package URL" (e.g., "pkg:maven/{namespace}/{name}@{version}")
+#             If build dependencies aren't required, it's better to call with "include_dependencies" equal to "false" for faster and smaller responses.
 
-            The API also supports an optional advanced query parameter.
-            Each query can be made from one or more terms separated by spaces.
-            Each term is a field name and search pattern: fieldName:pattern.
-            For example, project:my-project, will include only build scans for my-project in the response.
-            Terms can be combined using boolean "and" and "or" operators, and grouped using parentheses: user:dylan or (tag:CI and value:"Git branch=master")
-            Terms can also be negated using "-": project:my-project -tag:local
-            Another example: user:dylan or not (tag:CI and value:"Git branch=master")
-            Supported fields are (exactly as written in quotes): "user", "project", "requested" (e.g., tasks/goals/targets), "buildTool", "value" (i.e., custom value), "tag"'''
+#             The API also supports an optional advanced query parameter.
+#             Each query can be made from one or more terms separated by spaces.
+#             Each term is a field name and search pattern: fieldName:pattern.
+#             For example, project:my-project, will include only build scans for my-project in the response.
+#             Terms can be combined using boolean "and" and "or" operators, and grouped using parentheses: user:dylan or (tag:CI and value:"Git branch=master")
+#             Terms can also be negated using "-": project:my-project -tag:local
+#             Another example: user:dylan or not (tag:CI and value:"Git branch=master")
+#             Supported fields are (exactly as written in quotes): "user", "project", "requested" (e.g., tasks/goals/targets), "buildTool", "value" (i.e., custom value), "tag"
+#             The outcome of the build, such as failed, should not be used in Advanced Query
+#             '''
 
-# @mcp.resource("resource://get_builds")
 @mcp.tool()
 def get_builds(max_builds: int, include_attributes: bool, include_dependencies: bool, from_build_id: str, advanced_query: str) -> str:
     """
-    See @mcp.prompt('get_builds') for usage and details.
+        Get the latest N builds from the Develocity API.
+        N has a limit of 10.
+        When N is greater than 10, another call to this function should be made where 'from_build_id' is the build ID of the oldest build in the current set.
+        This can be repeated until the desired number of builds is fetched.
+
+        Included in the response is a list of builds.
+        At the top level of each build is: id, available at, build tool type, build tool version, build agent version, and models.
+
+        Additional build attributes can be included in the response by calling this function with "include_attributes" equal to "true".
+        These attributes may vary between build tools, but will generally include information like: build start time, build duration, project name, requested tasks/goals/targets, build outcome (e.g., passed or failed), whether the failure was due to tests/compile/lint (verification), whether the failure was due to toolchain issues (non-verification), tags, custom values, Develocity settings, build tool-specific options, and details about the environment.
+        If these additional build attributes aren't required, it's better to call with "include_attributes" equal to "false" for faster and smaller responses.
+        Custom values and tags are user-defined data.
+        Custom values are key-value pairs where tags are a simple value.
+        Common custom values are (exactly as written in quotes): "Git branch", "Git commit id", "Git repository", "CI provider"
+        Common tags are: either "CI" or "LOCAL", the Git branch, the OS (exactly "Linux", "Mac OS X", or "Windows*"), and whether the working directory had modifications (exactly "Dirty")
+
+        The dependencies of a build can be included in the response by calling this function with "include_dependencies" equal to "true".
+        A build dependency includes: namespace (i.e., "group"), name (i.e., "artifact"), version, and purl or "package URL" (e.g., "pkg:maven/{namespace}/{name}@{version}")
+        If build dependencies aren't required, it's better to call with "include_dependencies" equal to "false" for faster and smaller responses.
+
+        The API also supports an optional advanced query parameter.
+        Each query can be made from one or more terms separated by spaces.
+        Each term is a field name and search pattern: fieldName:pattern.
+        For example, project:my-project, will include only build scans for my-project in the response.
+        Terms can be combined using boolean "and" and "or" operators, and grouped using parentheses: user:dylan or (tag:CI and value:"Git branch=master")
+        Terms can also be negated using "-": project:my-project -tag:local
+        Another example: user:dylan or not (tag:CI and value:"Git branch=master")
+        Supported fields are (exactly as written in quotes): "user", "project", "requested" (e.g., tasks/goals/targets), "buildTool", "value" (i.e., custom value), "tag"
+        The outcome of the build, such as failed, should not be used in Advanced Query
     """
     try:
         url=f"{DEVELOCITY_URL}/api/builds?reverse=true&maxBuilds={max_builds}"
@@ -82,14 +111,14 @@ def get_builds(max_builds: int, include_attributes: bool, include_dependencies: 
     except Exception as e:
         return f"Error fetching build IDs: {e}"
 
-@mcp.prompt(name="get_configured_repositories_for_build", description="Prompt for get_configured_repositories_for_build tool usage.")
-def get_configured_repositories_for_build_doc() -> str:
-    return '''Get the configured repositories (e.g., Maven repositories) by build ID from the Develocity Export API.'''
+# @mcp.prompt(name="get_configured_repositories_for_build", description="Prompt for get_configured_repositories_for_build tool usage.")
+# def get_configured_repositories_for_build_doc() -> str:
+#     return '''Get the configured repositories (e.g., Maven repositories) by build ID from the Develocity Export API.'''
 
 @mcp.tool()
 def get_configured_repositories_for_build(build_id: str) -> list:
     """
-    See @mcp.prompt('get_configured_repositories_for_build') for usage and details.
+    Get the configured repositories (e.g., Maven repositories) by build ID from the Develocity Export API.
     """
     try:
         url = f"{DEVELOCITY_URL}/build-export/v2/build/{build_id}/events?eventTypes=Repository"
@@ -99,14 +128,14 @@ def get_configured_repositories_for_build(build_id: str) -> list:
     except Exception as e:
         return [f"Error fetching build repository: {e}"]
 
-@mcp.prompt(name="get_failure_details_for_build", description="Prompt for get_failure_details_for_build tool usage.")
-def get_failure_details_for_build_doc() -> str:
-    return '''Get the failure details by build ID from the Develocity Export API.'''
+# @mcp.prompt(name="get_failure_details_for_build", description="Prompt for get_failure_details_for_build tool usage.")
+# def get_failure_details_for_build_doc() -> str:
+#     return '''Get the failure details by build ID from the Develocity Export API.'''
 
 @mcp.tool()
 def get_failure_details_for_build(build_id: str) -> list:
     """
-    See @mcp.prompt('get_failure_details_for_build') for usage and details.
+    Get the failure details by build ID from the Develocity Export API.
     """
     try:
         url = f"{DEVELOCITY_URL}/build-export/v2/build/{build_id}/events?eventTypes=ExceptionData"
